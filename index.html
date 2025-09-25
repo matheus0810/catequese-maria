@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catequese Interativa: Conhecendo Nossa Senhora</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Serene Sky & Gold -->
+    <!-- Application Structure Plan: A single-page application with a non-linear, thematic structure. It begins with an interactive section on the core Marian dogmas, allowing users to select and explore each concept in detail. A static timeline provides a narrative overview of Mary's biblical journey, followed by a new, highly interactive section on Marian apparitions. A new, dedicated section explains Mary's role as intercessor, using the story of the Wedding at Cana as a central point. A final section explores the importance of the Holy Rosary. The structure prioritizes user choice and discovery, allowing them to jump directly to topics of interest (theology, history, intercession, apparitions, or prayer) rather than following a rigid, linear path. This design choice makes the complex content more digestible and engaging for the user. -->
+    <!-- Visualization & Content Choices: Report Info: Marian Dogmas -> Goal: Organize & Inform -> Presentation Method: Interactive Cards/Tabs (HTML/Tailwind) -> Interaction: Clicking a card reveals detailed text in a dedicated display area. Justification: Breaks down complex theological concepts into manageable, user-selected chunks. | Report Info: Biblical Story of Mary -> Goal: Show Sequence -> Presentation Method: Vertical Timeline (HTML/Tailwind) -> Interaction: Static visual narrative. Justification: More engaging than a text block for storytelling. | Report Info: Mary's Intercession at Cana -> Goal: Explain a key theological concept through a narrative -> Presentation Method: Static text block with a dedicated section. Justification: This narrative is a foundational part of Marian theology and is best presented as a cohesive, single piece of text to maintain its integrity. | Report Info: Marian Apparitions, Miracles, Curiosities, Patterns -> Goal: Inform & Engage -> Presentation: Interactive Cards/Grid (HTML/Tailwind) -> Interaction: Clicking a card (Lourdes, Fátima, Guadalupe) displays its specific miracles, curiosities, and a summary of common patterns in a dynamic content area. Justification: Categorizes a large amount of information and makes it explorable, preventing information overload and turning a simple list into a discovery feature. NO quantitative data was present, so no charts were used. | Report Info: Prayer and The Holy Rosary -> Goal: Inform -> Presentation: Static text block with a dedicated section. Justification: Provides a new section with valuable information about an important Marian devotion. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDF8F0;
+            color: #4A4A4A;
+        }
+        .active-dogma {
+            background-color: #003366;
+            color: #FFFFFF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 51, 102, 0.2);
+        }
+        .dogma-card {
+            transition: all 0.3s ease-in-out;
+            border: 1px solid #EAE0D5;
+        }
+        .dogma-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-color: #003366;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -31px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #D4AF37;
+            border: 3px solid #FDF8F0;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-003366" style="font-family: 'Lora', serif; color: #003366;">Conhecendo Nossa Senhora</h1>
+            <p class="mt-4 text-lg text-gray-600">Uma jornada interativa pela vida, virtudes e dogmas de Maria.</p>
+        </header>
+
+        <main>
+            <section id="dogmas" class="mb-16">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="font-family: 'Lora', serif; color: #003366;">Os Quatro Dogmas Marianos</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Os dogmas são verdades de fé reveladas por Deus e ensinadas pela Igreja. Eles iluminam a nossa compreensão sobre o papel único de Maria na história da salvação. Clique em cada dogma para aprender mais.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <button data-dogma="theotokos" class="dogma-card p-4 rounded-lg shadow-md bg-white text-center cursor-pointer active-dogma">
+                        <span class="text-3xl mb-2 block">👑</span>
+                        <h3 class="font-semibold text-sm md:text-base">Mãe de Deus</h3>
+                    </button>
+                    <button data-dogma="virginity" class="dogma-card p-4 rounded-lg shadow-md bg-white text-center cursor-pointer">
+                        <span class="text-3xl mb-2 block">🕊️</span>
+                        <h3 class="font-semibold text-sm md:text-base">Virgindade Perpétua</h3>
+                    </button>
+                    <button data-dogma="immaculate" class="dogma-card p-4 rounded-lg shadow-md bg-white text-center cursor-pointer">
+                        <span class="text-3xl mb-2 block">✨</span>
+                        <h3 class="font-semibold text-sm md:text-base">Imaculada Conceição</h3>
+                    </button>
+                    <button data-dogma="assumption" class="dogma-card p-4 rounded-lg shadow-md bg-white text-center cursor-pointer">
+                        <span class="text-3xl mb-2 block">🌟</span>
+                        <h3 class="font-semibold text-sm md:text-base">Assunção</h3>
+                    </button>
+                </div>
+
+                <div id="dogma-content" class="bg-white p-6 rounded-lg shadow-lg min-h-[300px]">
+                </div>
+            </section>
+
+            <section id="journey" class="mb-16">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="font-family: 'Lora', serif; color: #003366;">A Jornada de Maria na Bíblia</h2>
+                <div class="relative pl-8 border-l-2 border-dashed border-d4af37" style="border-color: #D4AF37;">
+                    <div class="timeline-item mb-8 pl-8">
+                        <h3 class="font-bold text-lg text-003366" style="color: #003366;">A Anunciação (Lucas 1, 26-38)</h3>
+                        <p class="text-gray-600">O Anjo Gabriel aparece a Maria em Nazaré e anuncia que ela conceberá Jesus, o Filho de Deus, pelo poder do Espírito Santo. Maria, uma jovem simples, demonstra a sua total humildade e obediência ao responder: "Eu sou a serva do Senhor; que aconteça comigo conforme a tua palavra". Esta aceitação é o ponto de viragem para a história da salvação, pois por meio do seu "Sim", o Verbo de Deus se fez carne.</p>
+                    </div>
+                    <div class="timeline-item mb-8 pl-8">
+                        <h3 class="font-bold text-lg text-003366" style="color: #003366;">A Visitação (Lucas 1, 39-56)</h3>
+                        <p class="text-gray-600">Após a Anunciação, Maria viaja com pressa para ajudar a sua prima Isabel, que estava grávida na velhice. Ao chegarem, João Batista, no ventre de Isabel, agita-se de alegria. Cheia do Espírito Santo, Isabel exclama: "Bendita és tu entre as mulheres e bendito é o fruto do teu ventre". Maria responde com o "Magnificat", um cântico que revela a sua profunda fé e o seu reconhecimento da misericórdia de Deus, que eleva os humildes e dispersa os soberbos.</p>
+                    </div>
+                    <div class="timeline-item mb-8 pl-8">
+                        <h3 class="font-bold text-lg text-003366" style="color: #003366;">O Nascimento de Jesus (Lucas 2, 1-20)</h3>
+                        <p class="text-gray-600">Em Belém, devido a um censo, Maria e José não encontram lugar na hospedaria, e Maria dá à luz o Filho de Deus em um estábulo. Este ato de humildade suprema demonstra que a grandeza de Deus se manifesta na simplicidade. Maria é a primeira a adorar o seu Filho, e logo a seguir pastores e magos vêm prestar-lhe homenagem. Maria "guardava todas estas coisas, meditando-as em seu coração".</p>
+                    </div>
+                    <div class="timeline-item mb-8 pl-8">
+                        <h3 class="font-bold text-lg text-003366" style="color: #003366;">Aos Pés da Cruz (João 19, 25-27)</h3>
+                        <p class="text-gray-600">No momento mais doloroso da vida de Jesus, Maria permanece ao seu lado, de pé. A sua presença é um testemunho de fidelidade e amor incondicional. Ali, Jesus confia Maria ao discípulo amado, dizendo: "Mulher, eis aí o teu filho!". E ao discípulo: "Eis aí a tua mãe!". Este momento é interpretado pela Igreja como a entrega de Maria como Mãe a toda a humanidade.</p>
+                    </div>
+                     <div class="timeline-item pl-8">
+                        <h3 class="font-bold text-lg text-003366" style="color: #003366;">Pentecostes (Atos 1, 12-14)</h3>
+                        <p class="text-gray-600">Após a Ascensão de Jesus ao Céu, os apóstolos se reúnem com Maria para esperar a vinda do Espírito Santo. Maria, que esteve com Jesus no início da Igreja, no seu ministério e na sua morte, está presente com a Igreja nascente no seu nascimento. Ela é o coração da comunidade de fé, a mãe que une todos os discípulos de Cristo.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="cana" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="font-family: 'Lora', serif; color: #003366;">A Intercessão de Maria nas Bodas de Caná</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">O Evangelho de João nos relata o primeiro milagre de Jesus, realizado por intercessão de Maria. Este evento é o fundamento bíblico para a nossa confiança na intercessão da Virgem Maria junto a seu Filho.</p>
+                <div class="text-gray-700 leading-relaxed">
+                    <p class="mb-4">No Evangelho de João (João 2, 1-11), Jesus, Maria e os discípulos são convidados para uma festa de casamento em Caná, na Galileia. Durante a festa, o vinho acaba. Maria, percebendo a situação embaraçosa dos noivos, diz a Jesus: "Eles não têm mais vinho". Jesus responde: "Mulher, que queres de mim? A minha hora ainda não chegou".</p>
+                    <p class="mb-4">À primeira vista, a resposta de Jesus pode parecer dura, mas o termo "Mulher" era uma forma de tratamento respeitosa na época, e a frase "que queres de mim?" pode ser entendida como um convite para Maria continuar. A expressão "a minha hora" refere-se ao seu tempo de glória, a sua Paixão, Morte e Ressurreição. No entanto, Maria não se intimida com a resposta de Jesus e demonstra a sua confiança total, dizendo aos serventes: "Fazei tudo o que ele vos disser".</p>
+                    <p class="mb-4">Maria, com sua fé e humildade, é a mediadora entre a necessidade humana e a vontade divina. Ela não dá uma ordem a Jesus, mas apresenta a necessidade, confiando plenamente que Ele fará o que é certo. Por sua intercessão, Jesus realiza o seu primeiro milagre público, transformando a água em vinho. Este milagre é um sinal de que a intercessão de Maria é poderosa e eficaz, pois, mesmo antes do tempo de Jesus, a sua Mãe consegue antecipar a "hora" do seu Filho.</p>
+                    <p class="font-semibold">O episódio das Bodas de Caná nos ensina que podemos e devemos recorrer a Maria com as nossas necessidades. Ela leva as nossas súplicas a Jesus e intercede por nós, confiando que Ele atenderá às nossas orações no seu tempo e da sua maneira.</p>
+                </div>
+            </section>
+
+            <section id="apparitions" class="mb-16">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="font-family: 'Lora', serif; color: #003366;">Aparições, Milagres e Curiosidades</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Maria, como mãe, continua a aparecer em todo o mundo para nos guiar. Explore as histórias e os sinais de sua presença em algumas de suas aparições mais conhecidas.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <button data-apparition="lourdes" class="dogma-card p-4 rounded-lg shadow-md bg-white text-center cursor-pointer">
+                        <span class="text-3xl mb-2 block">⛰️</span>
+                        <h3 class="font-semibold">Nossa Senhora de Lourdes</h3>
+                    </button>
+                    <button data-apparition="fatima" class="dogma-card p-4 rounded-lg shadow-md bg-white text-center cursor-pointer">
+                        <span class="text-3xl mb-2 block">☀️</span>
+                        <h3 class="font-semibold">Nossa Senhora de Fátima</h3>
+                    </button>
+                    <button data-apparition="guadalupe" class="dogma-card p-4 rounded-lg shadow-md bg-white text-center cursor-pointer">
+                        <span class="text-3xl mb-2 block">🌹</span>
+                        <h3 class="font-semibold">Nossa Senhora de Guadalupe</h3>
+                    </button>
+                </div>
+
+                <div id="apparition-content" class="bg-white p-6 rounded-lg shadow-lg min-h-[400px]">
+                </div>
+            </section>
+            
+            <section id="rosary" class="mb-16 bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="font-family: 'Lora', serif; color: #003366;">O Santo Rosário</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">O Santo Rosário é uma oração mariana fundamental. É uma forma de meditar nos mistérios da vida de Jesus e de Maria através da repetição de orações, como uma "coroa de rosas" para a Virgem.</p>
+                <div class="text-gray-700 leading-relaxed">
+                    <p class="mb-4">O Rosário tem as suas raízes na prática medieval de recitar 150 "Pai-Nossos" ou "Ave-Marias" como substituto dos 150 salmos. A forma moderna do Rosário foi popularizada por São Domingos de Gusmão, que recebeu a oração da própria Virgem Maria. Ao longo dos séculos, o Rosário tornou-se uma oração poderosa, recomendada por muitos Papas e ligada a grandes vitórias da Igreja.</p>
+                    <p class="mb-4">A essência do Rosário não está na repetição mecânica, mas na <strong>meditação</strong> dos "mistérios" de Jesus. Estes mistérios são eventos-chave da vida de Cristo e de Maria, divididos em quatro grupos: Mistérios Gozosos (a infância de Jesus), Luminosos (a sua vida pública), Dolorosos (a sua Paixão) e Gloriosos (a sua Ressurreição e a glória de Maria). Ao rezarmos o Rosário, não apenas pedimos a intercessão de Maria, mas também nos unimos a ela na meditação dos momentos mais importantes da história da salvação.</p>
+                    <p class="font-semibold">O Rosário é uma "ponte" entre nós e a Virgem Maria. Rezar o Rosário é uma forma de estar com Maria, de a conhecer melhor e de pedir a sua ajuda para nos aproximarmos de Jesus.</p>
+                </div>
+            </section>
+
+
+            <section id="prayers" class="bg-white p-8 rounded-lg shadow-lg text-center">
+                 <h2 class="text-2xl md:text-3xl font-bold mb-6" style="font-family: 'Lora', serif; color: #003366;">Orações a Nossa Senhora</h2>
+                 <div class="grid md:grid-cols-2 gap-8 text-left">
+                     <div>
+                        <h3 class="font-semibold text-xl mb-2" style="font-family: 'Lora', serif; color: #003366;">Ave Maria</h3>
+                        <p id="ave-maria-text" class="text-gray-700 leading-relaxed">
+                            Ave Maria, cheia de graça, o Senhor é convosco, bendita sois vós entre as mulheres e bendito é o fruto do vosso ventre, Jesus. Santa Maria, Mãe de Deus, rogai por nós pecadores, agora e na hora da nossa morte. Amém.
+                        </p>
+                        <button class="play-audio-btn mt-4 bg-003366 text-white px-4 py-2 rounded-lg text-sm hover:bg-d4af37 transition-colors">Ouvir Oração ✨</button>
+                     </div>
+                     <div>
+                        <h3 class="font-semibold text-xl mb-2" style="font-family: 'Lora', serif; color: #003366;">Salve Rainha</h3>
+                        <p id="salve-rainha-text" class="text-gray-700 leading-relaxed">
+                            Salve, Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve! A vós bradamos, os degredados filhos de Eva; a vós suspiramos, gemendo e chorando neste vale de lágrimas. Eia, pois, advogada nossa, esses vossos olhos misericordiosos a nós volvei; e depois deste desterro nos mostrai Jesus, bendito fruto do vosso ventre, ó clemente, ó piedosa, ó doce sempre Virgem Maria. Rogai por nós, Santa Mãe de Deus, para que sejamos dignos das promessas de Cristo. Amém.
+                        </p>
+                         <button class="play-audio-btn mt-4 bg-003366 text-white px-4 py-2 rounded-lg text-sm hover:bg-d4af37 transition-colors">Ouvir Oração ✨</button>
+                     </div>
+                 </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>Recurso de catequese interativa. Conteúdo baseado na doutrina da Igreja Católica.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const dogmaData = {
+            theotokos: {
+                title: 'Maria, Mãe de Deus (Theotokos)',
+                content: `
+                    <p class="mb-4">Este dogma, proclamado no Concílio de Éfeso em 431 d.C., afirma que Maria é a Mãe de Deus. A palavra grega <strong>Theotokos</strong> significa "Portadora de Deus". Este dogma não sugere que Maria é a criadora da divindade de Jesus, que é eterna, mas que ela deu a natureza humana ao Verbo de Deus, que é a segunda Pessoa da Santíssima Trindade. Portanto, ao ser Mãe de Jesus na sua humanidade, ela é Mãe da pessoa completa de Cristo, que é Deus e homem verdadeiro.</p>
+                    <p class="mb-4">A sua proclamação foi uma resposta à heresia do nestorianismo, que separava as duas naturezas de Cristo, sugerindo que Maria era apenas a mãe da natureza humana (Christotokos). O dogma da Theotokos defende a unidade inseparável das naturezas divina e humana em Jesus, garantindo a sua identidade como Filho de Deus feito homem. É por isso que este dogma é a base de toda a devoção mariana.</p>
+                    <p class="font-semibold">O Catecismo da Igreja Católica, no número 495, confirma: "Chamada nos Evangelhos 'a Mãe de Jesus', Maria é aclamada, sob o impulso do Espírito, desde antes do seu nascimento, como 'Mãe do meu Senhor'."</p>
+                `
+            },
+            virginity: {
+                title: 'A Virgindade Perpétua de Maria',
+                content: `
+                    <p class="mb-4">Este dogma, confirmado no Concílio de Latrão em 649 d.C., ensina que Maria foi virgem antes, durante e depois do parto de Jesus. Ele expressa a sua total e exclusiva consagração a Deus, que a preparou para a sua missão como Mãe do Salvador.</p>
+                    <ul class="list-disc list-inside mb-4 space-y-2">
+                        <li><strong>Virgindade antes do parto:</strong> A concepção de Jesus por Maria foi sobrenatural, por obra do Espírito Santo, como narrado em Lucas 1,34: "Como acontecerá isso, se não conheço homem?". Esta pergunta, mesmo estando na primeira fase do noivado judaico (o <strong>kiddushin</strong>), indica que Maria tinha uma intenção de virgindade, que só se pode explicar se José também a partilhasse. Esta fase do noivado já tornava o casal legalmente casado, mas sem o direito de coabitar, o que só aconteceria na segunda fase, o <strong>nissuin</strong>.</li>
+                        <li><strong>Virgindade durante o parto:</strong> A Igreja ensina que o nascimento de Jesus não violou a integridade física de Maria. O corpo de Cristo, que é glorioso desde a sua conceição, passou através dela sem causar sofrimento, tal como a luz atravessa um vidro sem o quebrar.</li>
+                        <li><strong>Virgindade depois do parto:</strong> Maria permaneceu virgem por toda a sua vida. As referências bíblicas aos "irmãos e irmãs de Jesus" (Marcos 6,3) não significam que fossem filhos biológicos de Maria. Na linguagem da época, a palavra hebraica "ah" e a grega "adelphos" eram usadas para se referir a parentes próximos, como primos ou tios, o que é confirmado por outros trechos bíblicos e pela tradição dos primeiros cristãos.</li>
+                    </ul>
+                    <p class="font-semibold">A virgindade de Maria é um sinal de sua fé pura e um modelo para a Igreja, que aspira a ser a "virgem fiel" que se entrega totalmente a Cristo.</p>
+                `
+            },
+            immaculate: {
+                title: 'A Imaculada Conceição',
+                content: `
+                    <p class="mb-4">Proclamado pelo Papa Pio IX em 1854, este dogma afirma que, "por um singular privilégio e graça de Deus Onipotente, em vista dos méritos de Jesus Cristo, Salvador do gênero humano, a bem-aventurada Virgem Maria foi preservada isenta de toda mancha de pecado original desde o primeiro instante de sua conceição".</p>
+                    <p class="mb-4">Este dogma não se refere à concepção virginal de Jesus, mas à concepção de Maria no ventre de sua mãe, Santa Ana. A Igreja argumenta que, para que Maria pudesse ser a "morada" do Filho de Deus, era necessário que ela estivesse completamente livre da mancha do pecado. O Anjo Gabriel a saúda como "cheia de graça" (Lucas 1,28), um título que sugere que a graça divina sempre a acompanhou.</p>
+                    <p class="mb-4">A teologia da Imaculada Conceição está ligada ao conceito de Maria como a "Nova Eva". A primeira Eva desobedeceu a Deus e trouxe o pecado ao mundo; Maria, a Nova Eva, obedeceu a Deus e se tornou a Mãe do Redentor. Foi a "graça preventiva" de Cristo que a preservou do pecado, para que ela pudesse cooperar plenamente com a salvação da humanidade.</p>
+                    <p class="font-semibold">Este dogma celebra a pureza e a santidade de Maria como um presente de Deus, que a preparou perfeitamente para ser a Mãe de seu Filho.</p>
+                `
+            },
+            assumption: {
+                title: 'A Assunção de Maria',
+                content: `
+                    <p class="mb-4">Em 1950, o Papa Pio XII proclamou este dogma, que estabelece que "a Imaculada Mãe de Deus, a sempre Virgem Maria, terminado o curso de sua vida terrestre, foi assunta em corpo e alma à glória celeste".</p>
+                    <p class="mb-4">Este dogma não se baseia diretamente em um texto bíblico que narre o evento, mas na crença ininterrupta da Igreja ao longo dos séculos. Desde a antiguidade, a tradição católica defende que Maria não sofreu a corrupção do túmulo. O fato de não haver nenhum local que guarde as suas relíquias físicas é visto como um sinal da sua elevação ao Céu.</p>
+                    <p class="mb-4">Sendo livre do pecado original, a consequência do pecado (a corrupção do corpo após a morte) não poderia tocar Maria. A Assunção é vista como uma antecipação da ressurreição de todos os cristãos, um sinal de esperança de que, um dia, os nossos corpos também serão glorificados e se unirão às nossas almas no Céu.</p>
+                    <p class="font-semibold">A Assunção de Maria é o último e definitivo triunfo do amor de Deus sobre o pecado e a morte na vida da Virgem Maria.</p>
+                `
+            }
+        };
+
+        const apparitionData = {
+            lourdes: {
+                title: 'Nossa Senhora de Lourdes',
+                place: 'Lourdes, França',
+                date: '1858',
+                story: `Em 1858, a Virgem Maria apareceu 18 vezes para uma jovem camponesa de 14 anos, Bernadette Soubirous, numa gruta. A Virgem, vestida de branco e com um terço nas mãos, revelou-se como a "Imaculada Conceição" e pediu a Bernadette que rezasse, fizesse penitência e construísse uma capela no local.`,
+                miracles: [
+                    '<strong>A fonte milagrosa:</strong> Durante uma das aparições, a Virgem instruiu Bernadette a cavar o chão, de onde brotou uma fonte de água. Essa água, apesar de não ter propriedades curativas científicas, é associada a mais de 70 curas milagrosas oficialmente reconhecidas pela Igreja. Elas são submetidas a uma rigorosa análise médica e teológica, e a sua ocorrência é considerada inexplicável para a ciência.',
+                    '<strong>O corpo de Santa Bernadette:</strong> Faleceu em 1879, mas o seu corpo permanece surpreendentemente intacto e incorrupto até hoje, visível na capela do convento em Nevers, França. A incorruptibilidade é vista como um sinal da santidade e da graça de Deus, que preservou o seu corpo da corrupção.',
+                    '<strong>A Fé e a Conversão:</strong> O maior milagre de Lourdes é a profunda conversão de milhões de peregrinos que visitam o santuário anualmente.'
+                ],
+                patterns: [
+                    '<strong>Escolha dos humildes:</strong> Maria apareceu para uma criança pobre e simples, que não tinha poder ou influência.',
+                    '<strong>Mensagem de oração e penitência:</strong> A mensagem central era um apelo à conversão dos pecadores, através do rosário e da penitência.',
+                    '<strong>Confirmação de um dogma:</strong> A Virgem confirmou o dogma da Imaculada Conceição, proclamado pela Igreja apenas 4 anos antes, ao dizer "Eu sou a Imaculada Conceição".'
+                ],
+                curiosities: [
+                    'Bernadette era analfabeta e não sabia o significado da expressão "Imaculada Conceição", o que deu credibilidade às suas visões.',
+                    'A água da fonte, que brotou do nada, é um dos maiores símbolos de Lourdes e se tornou um ponto de peregrinação para doentes de todo o mundo.',
+                    'O Papa São João Paulo II chamou Lourdes de "o templo da humanidade que sofre".'
+                ]
+            },
+            fatima: {
+                title: 'Nossa Senhora de Fátima',
+                place: 'Fátima, Portugal',
+                date: '1917',
+                story: `A Virgem Maria apareceu a três crianças pastorinhas: Lúcia (10), Francisco (9) e Jacinta (7). As aparições ocorreram do dia 13 de maio a 13 de outubro. As suas mensagens pediam oração diária do Rosário, penitência, devoção ao seu Imaculado Coração e a consagração da Rússia. Ela revelou três segredos que falavam sobre o inferno, o futuro da Primeira Guerra Mundial e a perseguição à Igreja.`,
+                miracles: [
+                    '<strong>O Milagre do Sol:</strong> Em 13 de outubro de 1917, cerca de 70 mil pessoas testemunharam o sol "dançar" no céu. O sol mudou de cor, girou sobre si mesmo e parecia cair sobre a terra. Este evento, presenciado por crentes e céticos, foi um sinal espetacular para validar as aparições.',
+                    '<strong>Curas e Conversões:</strong> O maior milagre de Fátima é a conversão dos corações humanos. As mensagens de Maria resultaram em uma onda de penitência e oração em todo o mundo.'
+                ],
+                patterns: [
+                    '<strong>Escolha das crianças:</strong> Maria escolheu crianças simples, que não teriam credibilidade sem o milagre do sol.',
+                    '<strong>Mensagem urgente:</strong> As mensagens tinham um tom urgente, pedindo oração e penitência para evitar a guerra e a perseguição.',
+                    '<strong>Previsões:</strong> A Virgem previu o fim da Primeira Guerra Mundial, o surgimento da Segunda Guerra Mundial e o avanço do comunismo na Rússia.'
+                ],
+                curiosities: [
+                    'O terceiro segredo de Fátima, revelado em 2000, é uma visão de um "Bispo de branco" que é baleado. O Papa São João Paulo II interpretou-o como uma profecia de sua própria tentativa de assassinato em 1981.',
+                    'Os corpos de Francisco e Jacinta, que morreram logo após as aparições, foram encontrados em estado incorrupto e estão sepultados no santuário de Fátima.',
+                    'A devoção ao Imaculado Coração de Maria, parte essencial da mensagem de Fátima, é a base para a oração de reparação pelos pecados do mundo.'
+                ]
+            },
+            guadalupe: {
+                title: 'Nossa Senhora de Guadalupe',
+                place: 'Cidade do México, México',
+                date: '1531',
+                story: `Em 1531, a Virgem Maria apareceu ao índio Juan Diego, um humilde converso, pedindo que construísse uma igreja em sua honra. Como prova, a Virgem o instruiu a colher rosas de Castela em pleno inverno. Ao abrir o seu manto (a tilma) diante do bispo, a imagem de Nossa Senhora apareceu milagrosamente impressa no tecido.`,
+                miracles: [
+                    '<strong>A imagem na tilma:</strong> O manto, feito de tecido de agave, que normalmente se deteriora em 10 anos, está intacto e sem sinais de decomposição há quase 500 anos. Vários testes científicos não conseguiram explicar como o tecido ainda está preservado.',
+                    '<strong>Sem pigmentos:</strong> Estudos científicos de 1930 revelaram que a imagem não tem tintas conhecidas. A coloração parece ser de origem desconhecida. Um estudo em 1979 com raios infravermelhos confirmou que não há pinceladas ou tintas na imagem.',
+                    '<strong>Sinais científicos:</strong> A imagem reflete a constelação do dia da aparição, a temperatura da tilma é semelhante à do corpo humano (36,5°C), e nos olhos da imagem é possível ver o reflexo de Juan Diego e outras pessoas, com base em estudos fotográficos de alta resolução.'
+                ],
+                patterns: [
+                    '<strong>Aparição a um povo oprimido:</strong> A Virgem Maria apareceu a um índio em um contexto de colonização e opressão, mostrando que ela estava presente para guiar e proteger o povo nativo.',
+                    '<strong>Sinal milagroso ligado a elementos locais:</strong> As rosas de Castela, que não existiam no México e floresceram no inverno, foram um sinal claro e incontestável para o bispo.',
+                    '<strong>Conversão massiva:</strong> As aparições resultaram na conversão de milhões de pessoas e marcaram o início da cristianização da América Latina.'
+                ],
+                curiosities: [
+                    'A imagem contém símbolos que eram sagrados para os astecas, como o cinto preto que indica gravidez, a flor de quatro pétalas, que simboliza Deus, e as estrelas, que simbolizam a divindade.',
+                    'Em 1751, um cientista usou um ácido para limpar a imagem, mas o ácido não causou nenhum dano.',
+                    'Em 1921, uma bomba explodiu no manto, mas ele permaneceu intacto.'
+                ]
+            }
+        };
+
+        const dogmaButtons = document.querySelectorAll('.dogma-card');
+        const dogmaContentContainer = document.getElementById('dogma-content');
+        const apparitionButtons = document.querySelectorAll('[data-apparition]');
+        const apparitionContentContainer = document.getElementById('apparition-content');
+        const playAudioButtons = document.querySelectorAll('.play-audio-btn');
+
+        function updateDogmaContent(dogmaKey) {
+            const data = dogmaData[dogmaKey];
+            if (data) {
+                dogmaContentContainer.innerHTML = `
+                    <div class="fade-in">
+                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="font-family: 'Lora', serif; color: #003366;">${data.title}</h3>
+                        <div class="text-gray-700 space-y-4 leading-relaxed">${data.content}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateApparitionContent(apparitionKey) {
+            const data = apparitionData[apparitionKey];
+            if (data) {
+                const miraclesList = data.miracles.map(item => `<li class="mb-2">${item}</li>`).join('');
+                const patternsList = data.patterns.map(item => `<li class="mb-2">${item}</li>`).join('');
+                const curiositiesList = data.curiosities.map(item => `<li class="mb-2">${item}</li>`).join('');
+
+                apparitionContentContainer.innerHTML = `
+                    <div class="fade-in">
+                        <h3 class="text-xl md:text-2xl font-bold mb-2" style="font-family: 'Lora', serif; color: #003366;">${data.title}</h3>
+                        <p class="text-sm text-gray-500 mb-4">${data.place}, ${data.date}</p>
+                        <p class="text-gray-700 mb-6">${data.story}</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold text-lg mb-2 text-003366" style="color: #003366;">Milagres e Sinais</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                    ${miraclesList}
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-2 text-003366" style="color: #003366;">Padrões e Curiosidades</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                    ${patternsList}
+                                    ${curiositiesList}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16, sampleRate) {
+            const dataLength = pcm16.length * 2;
+            const buffer = new ArrayBuffer(44 + dataLength);
+            const view = new DataView(buffer);
+            let offset = 0;
+
+            const writeString = (str) => {
+                for (let i = 0; i < str.length; i++) {
+                    view.setUint8(offset++, str.charCodeAt(i));
+                }
+            };
+
+            writeString('RIFF');
+            view.setUint32(offset, 36 + dataLength, true); offset += 4;
+            writeString('WAVE');
+            writeString('fmt ');
+            view.setUint32(offset, 16, true); offset += 4;
+            view.setUint16(offset, 1, true); offset += 2;
+            view.setUint16(offset, 1, true); offset += 2;
+            view.setUint32(offset, sampleRate, true); offset += 4;
+            view.setUint32(offset, sampleRate * 2, true); offset += 4;
+            view.setUint16(offset, 2, true); offset += 2;
+            view.setUint16(offset, 16, true); offset += 2;
+            writeString('data');
+            view.setUint32(offset, dataLength, true); offset += 4;
+
+            for (let i = 0; i < pcm16.length; i++) {
+                view.setInt16(offset, pcm16[i], true);
+                offset += 2;
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        async function playAudio(textToSpeak) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: textToSpeak }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: "Iapetus" }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                const audioPart = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = audioPart?.inlineData?.data;
+                const mimeType = audioPart?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                    const sampleRate = parseInt(mimeType.match(/rate=(\d+)/)[1], 10);
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                } else {
+                    console.log("Audio data not found or invalid.");
+                }
+            } catch (error) {
+                console.log("Error playing audio: ", error);
+            }
+        }
+
+        dogmaButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const dogmaKey = button.dataset.dogma;
+                dogmaButtons.forEach(btn => {
+                    btn.classList.remove('active-dogma');
+                    if(btn.querySelector('h3')) {
+                       btn.querySelector('h3').classList.remove('text-white');
+                    }
+                });
+                button.classList.add('active-dogma');
+                if(button.querySelector('h3')) {
+                       button.querySelector('h3').classList.add('text-white');
+                }
+                updateDogmaContent(dogmaKey);
+            });
+        });
+        
+        apparitionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const apparitionKey = button.dataset.apparition;
+                apparitionButtons.forEach(btn => {
+                    btn.classList.remove('active-dogma');
+                    if(btn.querySelector('h3')) {
+                       btn.querySelector('h3').classList.remove('text-white');
+                    }
+                });
+                button.classList.add('active-dogma');
+                if(button.querySelector('h3')) {
+                       button.querySelector('h3').classList.add('text-white');
+                }
+                updateApparitionContent(apparitionKey);
+            });
+        });
+
+        playAudioButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const prayerText = button.previousElementSibling.innerText;
+                playAudio(prayerText);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDogmaContent('theotokos');
+            updateApparitionContent('lourdes');
+            document.querySelector('[data-apparition="lourdes"]').classList.add('active-dogma');
+            document.querySelector('[data-apparition="lourdes"]').querySelector('h3').classList.add('text-white');
+        });
+
+    </script>
+</body>
+</html>
